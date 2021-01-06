@@ -5,10 +5,13 @@ This script explores the potential of using the Pimoroni Enviro+ as a sound pres
 
 # Setup
 sudo apt-get update
+
 sudo apt-get-upgrade
+
 curl -sSL https://get.pimoroni.com/enviroplus | bash
 
 sudo python -m pip uninstall sounddevice
+
 sudo python -m pip install sounddevice==0.3.15
 
 Follow instructions at:
