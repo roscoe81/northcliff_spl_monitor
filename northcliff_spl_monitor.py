@@ -5,7 +5,7 @@ import sounddevice
 import numpy
 import math
 
-print("""northcliff_spl_monitor.py Version 0.3 - Monitor and display approximate Sound Pressure Levels
+print("""northcliff_spl_monitor.py Version 0.4 - Monitor and display approximate Sound Pressure Levels
 
 Disclaimer: Not to be used for accurate sound level measurements.
 Only measures a limited bandwidth, has a limited method of frequency compensation and requires calibration.
@@ -80,9 +80,9 @@ while True:
     amps = noise.get_amplitudes_at_frequency_ranges([(30, 100), (100, 1000), (1000, 8000)])
     amps[0] *= 0.0562 # Adjust lowest frequencies RMS level by -25dB to appromimate A compensation curve
     amps[1] *= 0.316 # Adjust upper low frequencies RMS level by -10db to appromimate A compensation curve
-    weighted_total = sum(amps) # Sum adjusted RMS levels
+    weighted_total = sum(amps)/3 # Take mean of adjusted RMS levels
     ref_level = 0.005 # Sets quiet level reference baseline for dB measurements. Can be used for sound level baseline calibration
-    calib = 9.2 # Provides an offset for the weighted total RMS level that removes internal microphone noise.
+    calib = 2.5 # Provides an offset for the weighted total RMS level that removes internal microphone noise.
     # calib can be used for sound level gain compensation, in combination with setting the mocrophone gain level via alsamixer
     #print (amps, weighted_total)
     spl_ratio = (weighted_total-calib)/ref_level
