@@ -50,3 +50,17 @@ Use the following instead of the documented text for ~/.asoundrc:
 
 Use alsamixer to set adau7002 capture level to 100
 
+
+# Operation
+
+For a numerical display of the current approximate overall sound level:
+
+Run python3 northcliff_spl_monitor.py 0
+
+or for a graphical display of current and past approximate overall sound levels:
+
+Run python3 northcliff_spl_monitor.py 1
+
+or for a graphical display of sound amplitude levels by frequency band:
+
+Run python3 northcliff_spl_monitor.py 2
