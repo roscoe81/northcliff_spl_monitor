@@ -6,7 +6,7 @@ import numpy
 import math
 import sys
 
-print("""northcliff_spl_monitor.py Version 0.7 - Monitor and display approximate Sound Pressure Levels
+print("""northcliff_spl_monitor.py Version 0.8 - Monitor and display approximate Sound Pressure Levels
 
 Disclaimer: Not to be used for accurate sound level measurements.
 Only measures a limited bandwidth, has a limited method of frequency compensation and requires calibration.
@@ -34,8 +34,8 @@ class Noise():
         self.duration = duration
         self.sample_rate = sample_rate
 
-    def get_amplitudes_at_frequency_ranges(self, ranges):
-        """Return the RMS amplitude of frequencies in the given ranges.
+    def get_rms_at_frequency_ranges(self, ranges):
+        """Return the RMS levels of frequencies in the given ranges.
 
         :param ranges: List of ranges including a start and end range
 
@@ -84,14 +84,14 @@ draw = ImageDraw.Draw(img)
 
     
 while True:
-    amps = noise.get_amplitudes_at_frequency_ranges([(30, 100), (100, 1000), (1000, 8000)])
+    amps = noise.get_rms_at_frequency_ranges([(30, 100), (100, 1000), (1000, 8000)])
     if display_type <= 1:
-        amps[0] *= 0.0562 # Adjust lowest frequencies RMS level by -25dB to appromimate A compensation curve
-        amps[1] *= 0.316 # Adjust upper low frequencies RMS level by -10db to appromimate A compensation curve
+        amps[0] *= 0.0562 # Adjust lowest frequencies RMS level by -25dB to approximate A compensation curve
+        amps[1] *= 0.316 # Adjust upper low frequencies RMS level by -10db to approximate A compensation curve
         weighted_level = sum(amps)/3 # Take mean of adjusted RMS levels
         ref_level = 0.002 # Sets quiet level reference baseline for dB measurements. Can be used for sound level baseline calibration
-        calib = 3.1 # Provides an offset for the weighted total RMS level that removes internal microphone noise.
-        # calib can be used for sound level gain compensation, in combination with setting the mocrophone gain level via alsamixer
+        calib = 2 # Provides an offset for the weighted total RMS level that removes internal microphone noise.
+        # calib can be used for sound level gain compensation, in combination with setting the microphone gain level via alsamixer
         #print (amps, weighted_level)
         spl_ratio = (weighted_level-calib)/ref_level
         if spl_ratio > 0:
@@ -115,7 +115,7 @@ while True:
                 draw.rectangle((0, 0, WIDTH, HEIGHT), back_colour)
                 img.paste(img2, (-6, 0))
                 draw.text((30,0), "Sound Level", font=smallfont, fill=(255, 255, 255))
-                draw.line((WIDTH, HEIGHT, WIDTH, HEIGHT - (spl/2)), fill=message_colour, width=10)
+                draw.line((WIDTH, HEIGHT, WIDTH, HEIGHT - (spl-30)*0.8), fill=message_colour, width=10) #Scale for display
                 disp.display(img)
         else:
             print("Weighted RMS Level is less than the calibration offset")
@@ -125,19 +125,44 @@ while True:
             print(f"Upper Low Frequencies RMS Level: {amps[1]:.2f}")
             print(f"Highest Frequencies RMS Level: {amps[2]:.2f}")
     else:
-        amps[0] *= 0.0562 # Adjust lowest frequencies RMS level by -25dB to appromimate A compensation curve
-        amps[1] *= 0.316 # Adjust upper low frequencies RMS level by -10db to appromimate A compensation curve
-        amps = [n * 2 for n in amps] # Scale for display
-        #print (amps)
-        draw.rectangle((0, 0, WIDTH, 17), back_colour)
-        img2 = img.copy()
-        draw.rectangle((0, 0, WIDTH, HEIGHT), back_colour)
-        img.paste(img2, (-16, 0))
-        draw.text((15,0), "Frequency Levels", font=smallfont, fill=(255, 255, 255))
-        draw.line((WIDTH -15, HEIGHT, WIDTH -15, HEIGHT - amps[0]), fill=(0, 0, 255), width=5)
-        draw.line((WIDTH - 10, HEIGHT, WIDTH - 10, HEIGHT - amps[1]), fill=(0, 255, 0), width=5)
-        draw.line((WIDTH -5, HEIGHT, WIDTH -5, HEIGHT - amps[2]), fill=(255, 0, 0), width=5)
-        disp.display(img)
+        calib_amps = [0, 0, 0] # Set up calibrated amps list
+        spl_freq = [0, 0, 0] # Set up spl by frequency list
+        ref_level = 0.005 # Sets quiet level reference baseline for dB measurements. Can be used for sound level baseline calibration
+        calib = (2.9, 3.2, 1.3) # Provides an offset for the RMS level of each frequency band that removes internal microphone noise.
+        # calib can be used for sound level gain compensation, in combination with setting the microphone gain level via alsamixer
+        amps[0] *= 0.0562 # Adjust lowest frequencies RMS level by -25dB to approximate A compensation curve
+        amps[1] *= 0.316 # Adjust upper low frequencies RMS level by -10db to approximate A compensation curve
+        #print ('Amps', amps)
+        for item in range(len(calib)):
+            calib_amps[item] = amps[item] - calib[item]
+        #print ('Calib Amps', calib_amps)
+        spl_ratio_freq = [n / ref_level for n in calib_amps] # Scale for display
+        #print ('SPL Ratio', spl_ratio_freq)
+        all_spl_ratio_freq_ok = True
+        for spl_ratio in spl_ratio_freq:
+            if spl_ratio <= 0:
+                all_spl_ratio_freq_ok = False
+        if all_spl_ratio_freq_ok:
+            for item in range(len(spl_ratio_freq)):
+                spl_freq[item] = 20*math.log10(spl_ratio_freq[item])
+            #print('SPL Freq', spl_freq)
+            draw.rectangle((0, 0, WIDTH, 17), back_colour)
+            img2 = img.copy()
+            draw.rectangle((0, 0, WIDTH, HEIGHT), back_colour)
+            img.paste(img2, (-20, 0))
+            draw.text((15,0), "Frequency Levels", font=smallfont, fill=(255, 255, 255))
+            draw.line((WIDTH -15, HEIGHT, WIDTH -15, HEIGHT - (spl_freq[0]-30)*0.8), fill=(0, 0, 255), width=5) # Scale for display
+            draw.line((WIDTH - 10, HEIGHT, WIDTH - 10, HEIGHT - (spl_freq[1]-30)*0.8), fill=(0, 255, 0), width=5) # Scale for display
+            draw.line((WIDTH -5, HEIGHT, WIDTH -5, HEIGHT - (spl_freq[2]-30)*0.8), fill=(255, 0, 0), width=5) #Scale for display
+            disp.display(img)
+        else:
+            print("At least one frequency's RMS Level is less than the calibration offset")
+            print(f"Lowest Frequencies Calibration Offset: {calib[0]:.2f}")
+            print(f"Lowest Frequencies RMS Level: {amps[0]:.2f}")
+            print(f"Upper Low Frequencies Calibration Offset: {calib[1]:.2f}")
+            print(f"Upper Low Frequencies RMS Level: {amps[1]:.2f}")
+            print(f"Highest Frequencies Calibration Offset: {calib[2]:.2f}")
+            print(f"Highest Frequencies RMS Level: {amps[2]:.2f}")
         
         
     
