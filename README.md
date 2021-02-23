@@ -5,6 +5,8 @@ This script explores the potential of using the Pimoroni Enviro+ as a sound pres
 
 Version 1.0 now uses streaming to overcome the microphone's startup "plop" that was identified in the excellent review [here](https://flipreview.com/review-of-pimoronis-enviro-board-part2-lcd-noise-level-lightproximity/)
 
+The microphone's startup "plop" can be seen [here](https://github.com/roscoe81/northcliff_spl_monitor/blob/main/Mic%20Graphs/mic_startup_no_offset_all_samps.png) and it plays havov with the sound readings if the microphone is started for each sampling. Even with the use of streaming, I found that there were strange readings in the first few samples of each capture cycle [here](https://github.com/roscoe81/northcliff_spl_monitor/blob/main/Mic%20Graphs/mic_stable_offset_all_samps.png) and it was necessary to ignore the first twenty samples to get [this](https://github.com/roscoe81/northcliff_spl_monitor/blob/main/Mic%20Graphs/mic_stable_no_offset_ignore_first_20_samps.png). I then had to add a DC offset to get [this](https://github.com/roscoe81/northcliff_spl_monitor/blob/main/Mic%20Graphs/mic_stable_offset_ignore_first_20_samps.png). I also found that the microphone signal [drifted](https://github.com/roscoe81/northcliff_spl_monitor/blob/main/Mic%20Graphs/mic_long_term_drift.png) over time and I overcame this by restarting the stream very 400 capture cycles.
+
 
 # Setup
 sudo apt-get update
