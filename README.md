@@ -1,7 +1,10 @@
 # Northcliff SPL Monitor
 A Python Script that performs a basic sound pressure level monitor using the Pimoroni Enviro+
 
-This script explores the potential of using the Pimoroni Enviro+ as a sound pressure level monitor. Its functionality is currently limited due to its narrow frequency range, an approximated A-curve compensation over 3 frequency bands and limited calibration. It should therefore not be used when accurate sound pressure level reading are required and should only be used as a base for future development.
+This script explores the potential of using the Pimoroni Enviro+ as a sound pressure level monitor. Its functionality is currently limited due to its use of an approximated A-curve compensation over 3 frequency bands and limited calibration. It should therefore not be used when accurate sound pressure level reading are required and should only be used as a base for future development.
+
+Version 1.0 now uses streaming to overcome the microphone's startup "plop" that was identified in the excellent review [here](https://flipreview.com/review-of-pimoronis-enviro-board-part2-lcd-noise-level-lightproximity/)
+
 
 # Setup
 sudo apt-get update
