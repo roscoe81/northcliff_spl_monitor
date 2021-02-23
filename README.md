@@ -53,7 +53,7 @@ Use the following instead of the documented text for ~/.asoundrc:
 26.	max_dB 30.0
 27.	}
 
-Use alsamixer to set adau7002 capture level to 100
+Use alsamixer to set adau7002 capture level to 70
 
 
 # Operation
