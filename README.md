@@ -70,4 +70,4 @@ or for a graphical display of current and past approximate sound levels by frequ
 
 Run python3 northcliff_spl_monitor.py 2
 
-Version 2.0 adds the ability to cycle through the three displays by briefly touching the Enviro+'s light/promimity sensor
+Version 2.1 adds the ability to cycle through the three displays by briefly touching the Enviro+'s light/proximity sensor
