@@ -5,7 +5,7 @@ This script explores the potential of using the Pimoroni Enviro+ as a sound pres
 
 Versions 1.0 and later use streaming to overcome the microphone's startup "plop" that was identified in the excellent review [here](https://flipreview.com/review-of-pimoronis-enviro-board-part2-lcd-noise-level-lightproximity/)
 
-The microphone's startup "plop" can be seen [here](https://github.com/roscoe81/northcliff_spl_monitor/blob/main/Mic%20Graphs/mic_startup_no_offset.png) and it plays havoc with the sound readings if the microphone is started for each sampling. A DC osset remained after removing the startup "plop", seen [here]{https://github.com/roscoe81/northcliff_spl_monitor/blob/main/Mic%20Graphs/mic_stable_no_offset.png} and removing it results in [this]{https://github.com/roscoe81/northcliff_spl_monitor/blob/main/Mic%20Graphs/mic_stable_offset.png}.
+The microphone's startup "plop" can be seen [here](https://github.com/roscoe81/northcliff_spl_monitor/blob/main/Mic%20Graphs/mic_startup_no_offset.png) and it plays havoc with the sound readings if the microphone is started for each sampling. A DC osset remained after removing the startup "plop", seen [here](https://github.com/roscoe81/northcliff_spl_monitor/blob/main/Mic%20Graphs/mic_stable_no_offset.png) and removing it results in [this](https://github.com/roscoe81/northcliff_spl_monitor/blob/main/Mic%20Graphs/mic_stable_offset.png).
 
 
 # Setup
