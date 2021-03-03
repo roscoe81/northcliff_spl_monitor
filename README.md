@@ -58,16 +58,18 @@ Use alsamixer to set adau7002 capture level to 70
 
 # Operation
 
-For a numerical display of the current approximate overall sound level:
+For a numerical display of the current approximate overall sound level (Display 0):
 
 Run python3 northcliff_spl_monitor.py or python3 northcliff_spl_monitor.py 0
 
-or for a graphical display of current and past approximate overall sound levels:
+or for a graphical display of current and past approximate overall sound levels (Display 1):
 
 Run python3 northcliff_spl_monitor.py 1
 
-or for a graphical display of current and past approximate sound levels by frequency band:
+or for a graphical display of current and past approximate sound levels by frequency band (Display 2):
 
 Run python3 northcliff_spl_monitor.py 2
 
 Version 2.1 adds the ability to cycle through the three displays by briefly touching the Enviro+'s light/proximity sensor
+
+Version 2.2 adds a line in Display 2 that shows the maximum sound level that's been recorded since selecting that display, as well as the time and date when it was recorded. The maximum sound level is reset when selecting another display.

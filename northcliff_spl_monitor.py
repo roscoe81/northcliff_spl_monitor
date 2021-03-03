@@ -8,6 +8,7 @@ import sys
 import matplotlib.pyplot as plt
 import json
 import time
+from datetime import datetime
 try:
     # Transitional fix for breaking change in LTR559
     from ltr559 import LTR559
@@ -16,7 +17,7 @@ except ImportError:
     import ltr559
 
 
-print("""northcliff_spl_monitor.py Version 2.1 - Gen Monitor and display approximate Sound Pressure Levels - Streaming Variant
+print("""northcliff_spl_monitor.py Version 2.2 - Gen Monitor and display approximate Sound Pressure Levels with Max Level in Display 1
 
 Disclaimer: Not to be used for accurate sound level measurements.
 Only has a limited method of frequency compensation and requires calibration.
@@ -27,7 +28,7 @@ Press Ctrl+C to exit
 
 
 class Noise():
-    def __init__(self, spl_ref_level, log_sound_data, debug_recording_capture, disp, WIDTH, HEIGHT, smallfont, mediumfont,
+    def __init__(self, spl_ref_level, log_sound_data, debug_recording_capture, disp, WIDTH, HEIGHT, vsmallfont, smallfont, mediumfont,
                  largefont, back_colour, display_type, img, draw, sample_rate=48000, duration=0.25):
         self.sample_counter = 0
         self.previous_sample_count = 0
@@ -37,6 +38,7 @@ class Noise():
         self.disp = disp
         self.WIDTH = WIDTH
         self.HEIGHT = HEIGHT
+        self.vsmallfont = vsmallfont
         self.smallfont = smallfont
         self.mediumfont = mediumfont
         self.largefont = largefont
@@ -48,6 +50,8 @@ class Noise():
         self.duration = duration
         self.sample_rate = sample_rate
         self.last_display_change = 0
+        self.max_spl = 0
+        self.max_spl_datetime = None
         self.recording = []
         self.stream = sd.InputStream(samplerate=self.sample_rate, channels=1, blocksize = 12000, device = "dmic_sv", callback=self.process_frames)
 
@@ -94,6 +98,16 @@ class Noise():
                                 spl_ratio = (weighted_level)/self.spl_ref_level
                                 if spl_ratio > 0:
                                     spl = 20*math.log10(spl_ratio)
+                                    # Capture Max sound level once display has been changed for > 2 seconds
+                                    if spl >= self.max_spl and (time.time() - self.last_display_change) > 2:
+                                        self.max_spl = spl
+                                        self.max_spl_datetime = datetime.now()
+                                        if self.max_spl<=40:
+                                            max_spl_colour = (0, 255, 0)
+                                        elif 40<self.max_spl<=85:
+                                            max_spl_colour=(255, 255, 0)
+                                        else:
+                                            max_spl_colour = (255, 0, 0)
                                     if spl<=40:
                                         message_colour = (0, 255, 0)
                                     elif 40<spl<=85:
@@ -109,12 +123,22 @@ class Noise():
                                         self.disp.display(img)
                                     else:
                                         self.draw.rectangle((0, 0, self.WIDTH, 14), self.back_colour)
-                                        img2 = self.img.copy()
                                         self.draw.rectangle((0, 0, self.WIDTH, self.HEIGHT), self.back_colour)
                                         if not self.display_changed:
                                             self.img.paste(img2, (-6, 0))
-                                        self.draw.text((30,0), "Sound Level", font=self.smallfont, fill=(255, 255, 255))
                                         self.draw.line((self.WIDTH, self.HEIGHT, self.WIDTH, self.HEIGHT - (spl-40)), fill=message_colour, width=10) #Scale for display
+                                        self.draw.rectangle((0, 0, self.WIDTH, 14), self.back_colour)
+                                        img2 = self.img.copy()
+                                        self.draw.text((30,0), "Sound Level", font=self.smallfont, fill=(255, 255, 255))
+                                        if self.max_spl != 0:
+                                            self.draw.line((0, self.HEIGHT - (self.max_spl-40), self.WIDTH, self.HEIGHT - (self.max_spl-40)), fill=max_spl_colour, width=1) #Display Max Line
+                                            date_string = self.max_spl_datetime.strftime("%d %b %y").lstrip('0')
+                                            time_string = self.max_spl_datetime.strftime("%H:%M")
+                                            if self.max_spl > 85:
+                                                text_height = self.HEIGHT - (self.max_spl-42)
+                                            else:
+                                                text_height = self.HEIGHT - (self.max_spl-25)
+                                            self.draw.text((0, text_height), f"Max {self.max_spl:.1f} dB {time_string} {date_string}", font=self.vsmallfont, fill=max_spl_colour)
                                         self.disp.display(self.img)
                                         self.display_changed = False
                                     if self.log_sound_data:
@@ -131,25 +155,26 @@ class Noise():
                                 if all_spl_ratio_freq_ok:
                                     for item in range(len(spl_ratio_freq)):
                                         spl_freq[item] = 20*math.log10(spl_ratio_freq[item])
-                                    #print('SPL Freq', spl_freq)
                                     self.draw.rectangle((0, 0, self.WIDTH, 17), self.back_colour)
                                     img2 = self.img.copy()
                                     self.draw.rectangle((0, 0, self.WIDTH, self.HEIGHT), self.back_colour)
                                     if not self.display_changed:
                                         self.img.paste(img2, (-20, 0))
                                     self.draw.text((15,0), "Frequency Levels", font=self.smallfont, fill=(255, 255, 255))
-                                    self.draw.line((self.WIDTH -15, self.HEIGHT, self.WIDTH -15, self.HEIGHT - (spl_freq[0]-40)), fill=(0, 0, 255), width=5) # Scale for display
-                                    self.draw.line((self.WIDTH - 10, self.HEIGHT, self.WIDTH - 10, self.HEIGHT - (spl_freq[1]-40)), fill=(0, 255, 0), width=5) # Scale for display
-                                    self.draw.line((self.WIDTH -5, self.HEIGHT, self.WIDTH -5, self.HEIGHT - (spl_freq[2]-40)), fill=(255, 0, 0), width=5) #Scale for display
+                                    self.draw.line((self.WIDTH-15, self.HEIGHT, self.WIDTH-15, self.HEIGHT - (spl_freq[0]-40)), fill=(0, 0, 255), width=5) # Scale for display
+                                    self.draw.line((self.WIDTH-10, self.HEIGHT, self.WIDTH-10, self.HEIGHT - (spl_freq[1]-40)), fill=(0, 255, 0), width=5) # Scale for display
+                                    self.draw.line((self.WIDTH-5, self.HEIGHT, self.WIDTH-5, self.HEIGHT - (spl_freq[2]-40)), fill=(255, 0, 0), width=5) #Scale for display
                                     self.disp.display(self.img)
                                     self.display_changed = False
                     proximity = ltr559.get_proximity()
-                    # If the proximity crosses the threshold, toggle the mode
+                    # If the proximity crosses the threshold, toggle the display type
                     if proximity > 1500 and time.time() - self.last_display_change > 1:
                         self.display_type += 1
                         self.display_type %= 3
                         print('Display Type', self.display_type)
                         self.display_changed = True
+                        self.max_spl = 0
+                        self.max_spl_datetime = None
                         self.last_display_change=time.time()
         except KeyboardInterrupt:
             self.stream.abort()
@@ -165,6 +190,7 @@ disp = ST7735.ST7735(
 disp.begin()
 WIDTH = disp.width
 HEIGHT = disp.height
+vsmallfont = ImageFont.truetype(UserFont, 11)
 smallfont = ImageFont.truetype(UserFont, 16)
 mediumfont = ImageFont.truetype(UserFont, 24)
 largefont = ImageFont.truetype(UserFont, 32)
@@ -180,7 +206,7 @@ log_sound_data = False # Set to True to log sound data for debugging
 debug_recording_capture = False # Set to True for plotting each recording stream sample
        
 if __name__ == '__main__': # This is where to overall code kicks off
-    noise = Noise(spl_ref_level, log_sound_data, debug_recording_capture, disp, WIDTH, HEIGHT, smallfont, mediumfont, largefont, back_colour, display_type, img, draw)
+    noise = Noise(spl_ref_level, log_sound_data, debug_recording_capture, disp, WIDTH, HEIGHT, vsmallfont, smallfont, mediumfont, largefont, back_colour, display_type, img, draw)
     noise.run()
 
         
