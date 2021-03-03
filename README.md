@@ -72,4 +72,4 @@ Run python3 northcliff_spl_monitor.py 2
 
 Version 2.1 adds the ability to cycle through the three displays by briefly touching the Enviro+'s light/proximity sensor
 
-Version 2.2 adds a line in Display 2 that shows the maximum sound level that's been recorded since selecting that display, as well as the time and date when it was recorded. The maximum sound level is reset when selecting another display.
+Version 2.2 adds a line in Display 1 that shows the maximum sound level that's been recorded since selecting that display, as well as the time and date when it was recorded. The maximum sound level is reset when selecting another display.
