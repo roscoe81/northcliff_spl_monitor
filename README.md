@@ -17,7 +17,7 @@ curl -sSL https://get.pimoroni.com/enviroplus | bash
 
 sudo python -m pip uninstall sounddevice
 
-sudo python -m pip install sounddevice==0.3.15
+sudo pip3 install sounddevice==0.3.15
 
 Follow instructions at:
 https://learn.adafruit.com/adafruit-i2s-mems-microphone-breakout/raspberry-pi-wiring-test
@@ -53,7 +53,7 @@ Use the following instead of the documented text for ~/.asoundrc:
 26.	max_dB 30.0
 27.	}
 
-Use alsamixer to set adau7002 capture level to 70
+Use alsamixer to set adau7002 capture level to 50
 
 
 # Operation
