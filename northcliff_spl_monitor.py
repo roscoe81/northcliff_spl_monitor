@@ -17,7 +17,7 @@ except ImportError:
     import ltr559
 
 
-print("""northcliff_spl_monitor.py Version 2.5 - Gen Monitor and display approximate Sound Pressure Levels with Max Level in Display 1 alsamixer at 50
+print("""northcliff_spl_monitor.py Version 2.6 - Gen Monitor and display approximate Sound Pressure Levels with Max Level in Display 1 alsamixer at 50
 
 Disclaimer: Not to be used for accurate sound level measurements.
 Only has a limited method of frequency compensation and requires calibration.
@@ -125,18 +125,18 @@ class Noise():
                                 self.draw.rectangle((0, 0, self.WIDTH, self.HEIGHT), self.back_colour)
                                 if not self.display_changed:
                                     self.img.paste(img2, (-6, 0))
-                                self.draw.line((self.WIDTH, self.HEIGHT, self.WIDTH, self.HEIGHT - (spl-30)), fill=message_colour, width=10) #Scale for display
+                                self.draw.line((self.WIDTH, self.HEIGHT, self.WIDTH, self.HEIGHT - (spl-35)), fill=message_colour, width=10) #Scale for display
                                 self.draw.rectangle((0, 0, self.WIDTH, 14), self.back_colour)
                                 img2 = self.img.copy()
                                 self.draw.text((30,0), "Noise Level", font=self.smallfont, fill=message_colour)
                                 if self.max_spl != 0:
-                                    self.draw.line((0, self.HEIGHT - (self.max_spl-30), self.WIDTH, self.HEIGHT - (self.max_spl-30)), fill=max_spl_colour, width=1) #Display Max Line
+                                    self.draw.line((0, self.HEIGHT - (self.max_spl-35), self.WIDTH, self.HEIGHT - (self.max_spl-35)), fill=max_spl_colour, width=1) #Display Max Line
                                     date_string = self.max_spl_datetime.strftime("%d %b %y").lstrip('0')
                                     time_string = self.max_spl_datetime.strftime("%H:%M")
                                     if self.max_spl > 85:
-                                        text_height = self.HEIGHT - (self.max_spl-32)
+                                        text_height = self.HEIGHT - (self.max_spl-37)
                                     else:
-                                        text_height = self.HEIGHT - (self.max_spl-15)
+                                        text_height = self.HEIGHT - (self.max_spl-20)
                                     self.draw.text((0, text_height), f"Max {self.max_spl:.1f} dB {time_string} {date_string}", font=self.vsmallfont, fill=max_spl_colour)
                                 self.disp.display(self.img)
                                 self.display_changed = False
@@ -160,9 +160,9 @@ class Noise():
                                     if not self.display_changed:
                                         self.img.paste(img2, (-20, 0))
                                     self.draw.text((30,0), "Noise Bands", font=self.smallfont, fill=message_colour)
-                                    self.draw.line((self.WIDTH-15, self.HEIGHT, self.WIDTH-15, self.HEIGHT - (spl_freq[0]-30)), fill=(0, 0, 255), width=5) # Scale for display
-                                    self.draw.line((self.WIDTH-10, self.HEIGHT, self.WIDTH-10, self.HEIGHT - (spl_freq[1]-30)), fill=(0, 255, 0), width=5) # Scale for display
-                                    self.draw.line((self.WIDTH-5, self.HEIGHT, self.WIDTH-5, self.HEIGHT - (spl_freq[2]-30)), fill=(255, 0, 0), width=5) #Scale for display
+                                    self.draw.line((self.WIDTH-15, self.HEIGHT, self.WIDTH-15, self.HEIGHT - (spl_freq[0]-35)), fill=(0, 0, 255), width=5) # Scale for display
+                                    self.draw.line((self.WIDTH-10, self.HEIGHT, self.WIDTH-10, self.HEIGHT - (spl_freq[1]-35)), fill=(0, 255, 0), width=5) # Scale for display
+                                    self.draw.line((self.WIDTH-5, self.HEIGHT, self.WIDTH-5, self.HEIGHT - (spl_freq[2]-35)), fill=(255, 0, 0), width=5) #Scale for display
                                     self.disp.display(self.img)
                                     self.display_changed = False
                     proximity = ltr559.get_proximity()
