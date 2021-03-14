@@ -15,6 +15,8 @@ sudo apt-get-upgrade
 
 curl -sSL https://get.pimoroni.com/enviroplus | bash
 
+sudo pip3 install matplotlib
+
 sudo python -m pip uninstall sounddevice
 
 sudo pip3 install sounddevice==0.3.15
