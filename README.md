@@ -1,12 +1,13 @@
 # Northcliff SPL Monitor
 A Python Script that performs a basic sound pressure level monitor using the Pimoroni Enviro+
 
-This script explores the potential of using the Pimoroni Enviro+ as a sound pressure level monitor. Its functionality is currently limited due to its use of an approximated A-curve compensation over 3 frequency bands and limited calibration. It should therefore not be used when accurate sound pressure level reading are required and should only be used as a base for future development.
+This script explores the potential of using the Pimoroni Enviro+ as a sound pressure level monitor. This project is still in the experimental phase. It should therefore not be used when accurate sound pressure level readings are required and should only be used as a base for future development.
 
 Versions 1.0 and later use streaming to overcome the microphone's startup "plop" that was identified in the excellent review [here](https://flipreview.com/review-of-pimoronis-enviro-board-part2-lcd-noise-level-lightproximity/)
 
 The microphone's startup "plop" can be seen [here](https://github.com/roscoe81/northcliff_spl_monitor/blob/main/Mic%20Graphs/mic_startup_no_offset.png) and it plays havoc with the sound readings if the microphone is started for each sampling. A DC offset remained after removing the startup "plop", seen [here](https://github.com/roscoe81/northcliff_spl_monitor/blob/main/Mic%20Graphs/mic_stable_no_offset.png) and removing that DC results in [this](https://github.com/roscoe81/northcliff_spl_monitor/blob/main/Mic%20Graphs/mic_stable_offset.png).
 
+Version 2.8 introduces improved A-Curve weighting. This requires the installation of some additional modules and an adjustment of the alsamixer microphone level to avoid clipping. These are highlighted in the Setup section.
 
 # Setup
 sudo apt-get update
@@ -20,6 +21,23 @@ sudo pip3 install matplotlib
 sudo python -m pip uninstall sounddevice
 
 sudo pip3 install sounddevice==0.3.15
+
+-------------------------------------------------
+
+For Versions 2.8 and later:
+
+sudo apt-get install python3-scipy
+
+sudo pip3 install git+https://github.com/endolith/waveform_analysis.git@master
+
+-------------------------------------------------
+
+For Versions 2.8 and later if wishing to use matplotlib for microphone debugging:
+
+sudo apt-get install python3-gi-cairo
+
+-------------------------------------------------
+
 
 Follow instructions at:
 https://learn.adafruit.com/adafruit-i2s-mems-microphone-breakout/raspberry-pi-wiring-test
@@ -55,7 +73,19 @@ Use the following instead of the documented text for ~/.asoundrc:
 26.	max_dB 30.0
 27.	}
 
+-------------------------------------------------
+
+For versions prior to Version 2.8:
+
 Use alsamixer to set adau7002 capture level to 50
+
+-------------------------------------------------
+
+For Version 2.8 and later:
+
+Use alsamixer to set adau7002 capture level to 10 (2.40dB Gain)
+
+-------------------------------------------------
 
 
 # Operation
