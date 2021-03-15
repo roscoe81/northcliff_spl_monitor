@@ -20,10 +20,9 @@ except ImportError:
     import ltr559
 
 
-print("""northcliff_spl_monitor.py Version 2.8 - Gen Monitor and display approximate Sound Pressure Levels with improved A-Curve weighting. alsamixer Mic at 10% (2.40dB Gain)
+print("""northcliff_spl_monitor.py Version 2.9 - Gen Monitor and display approximate Sound Pressure Levels with improved A-Curve weighting. alsamixer Mic at 10% (2.40dB Gain)
 
 Disclaimer: Not to be used for accurate sound level measurements.
-Only has a limited method of frequency compensation and requires calibration.
 
 Press Ctrl+C to exit
 
@@ -248,9 +247,9 @@ class Noise():
                                     if not self.display_changed:
                                         self.img.paste(img2, (-20, 0))
                                     self.draw.text((30,0), "Noise Bands", font=self.smallfont, fill=message_colour)
-                                    self.draw.line((self.WIDTH-15, self.HEIGHT, self.WIDTH-15, self.HEIGHT - (spl_freq[0]-85)), fill=(0, 0, 255), width=5) # Scale for display
-                                    self.draw.line((self.WIDTH-10, self.HEIGHT, self.WIDTH-10, self.HEIGHT - (spl_freq[1]-70)), fill=(0, 255, 0), width=5) # Scale for display
-                                    self.draw.line((self.WIDTH-5, self.HEIGHT, self.WIDTH-5, self.HEIGHT - (spl_freq[2]-55)), fill=(255, 0, 0), width=5) #Scale for display
+                                    self.draw.line((self.WIDTH-15, self.HEIGHT, self.WIDTH-15, self.HEIGHT - (spl_freq[0]*1.14-103)), fill=(0, 0, 255), width=5) # Scale for display
+                                    self.draw.line((self.WIDTH-10, self.HEIGHT, self.WIDTH-10, self.HEIGHT - (spl_freq[1]*0.844-59)), fill=(0, 255, 0), width=5) # Scale for display
+                                    self.draw.line((self.WIDTH-5, self.HEIGHT, self.WIDTH-5, self.HEIGHT - (spl_freq[2]*0.747-45)), fill=(255, 0, 0), width=5) #Scale for display
                                     self.disp.display(self.img)
                                     self.display_changed = False
                     proximity = ltr559.get_proximity()
