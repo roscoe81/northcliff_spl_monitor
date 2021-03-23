@@ -12,7 +12,7 @@ Version 2.8 introduces improved A-Curve weighting. This requires the installatio
 # Setup
 sudo apt-get update
 
-sudo apt-get-upgrade
+sudo apt-get upgrade
 
 curl -sSL https://get.pimoroni.com/enviroplus | bash
 
