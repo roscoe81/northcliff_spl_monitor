@@ -83,7 +83,7 @@ Use alsamixer to set adau7002 capture level to 50
 
 For Version 2.8 and later:
 
-Use alsamixer to set adau7002 capture level to 10 (2.40dB Gain)
+Use alsamixer to set adau7002 capture level to 10
 
 -------------------------------------------------
 
